@@ -16,6 +16,10 @@
 typedef struct { int fd; int is_http; } conn_t;
 typedef struct { int lfd; int is_http; } acceptor_t;
 
+/* Handler threads get an explicit 1 MB stack: musl (Alpine) defaults thread
+ * stacks to ~128 KB, which is too small for our request buffers. */
+static pthread_attr_t g_handler_attr;
+
 static int make_listener(int port) {
     int fd = socket(AF_INET, SOCK_STREAM, 0);
     if (fd < 0) return -1;
@@ -48,8 +52,7 @@ static void *acceptor(void *arg) {
         conn_t *c = malloc(sizeof(conn_t));
         c->fd = cfd; c->is_http = ac->is_http;
         pthread_t t;
-        if (pthread_create(&t, NULL, handler, c) != 0) { close(cfd); free(c); continue; }
-        pthread_detach(t);
+        if (pthread_create(&t, &g_handler_attr, handler, c) != 0) { close(cfd); free(c); continue; }
     }
     return NULL;
 }
@@ -70,6 +73,10 @@ int main(void) {
     setvbuf(stdout, NULL, _IONBF, 0);
 
     store_init();
+
+    pthread_attr_init(&g_handler_attr);
+    pthread_attr_setstacksize(&g_handler_attr, 1024 * 1024);   /* 1 MB (musl default is ~128 KB) */
+    pthread_attr_setdetachstate(&g_handler_attr, PTHREAD_CREATE_DETACHED);
 
     int http_port = env_port("PORT", 8080);   /* Render injects PORT for the web service */
     int resp_port = env_port("RESP_PORT", 6379);

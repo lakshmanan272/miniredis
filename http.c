@@ -138,7 +138,7 @@ void serve_http(int fd) {
         if (n <= 0) break;                                  /* blank line or error ends headers */
         if (!strncasecmp(line, "Content-Length:", 15)) content_length = atol(line + 15);
     }
-    char body[65536]; body[0] = 0;
+    char body[16384]; body[0] = 0;
     if (content_length > 0) {
         if (content_length > (long)sizeof(body) - 1) content_length = sizeof(body) - 1;
         if (rio_read_n(&r, body, (size_t)content_length) < 0) return;

@@ -53,7 +53,7 @@ void gen_token(char out[25]);                                   /* 24 hex chars 
 int  url_decode(const char *in, char *out, size_t outsz);       /* %XX + '+' -> space; returns len or -1 */
 
 /* buffered reader over a socket fd */
-typedef struct { int fd; char buf[65536]; size_t start, end; } rio;
+typedef struct { int fd; char buf[16384]; size_t start, end; } rio;
 void rio_init(rio *r, int fd);
 int  rio_read_line(rio *r, char *out, size_t max);              /* strips CRLF; returns len or -1 */
 int  rio_read_n(rio *r, char *out, size_t n);                   /* exactly n bytes; 0 ok, -1 err */
