@@ -1,0 +1,12 @@
+# Render Blueprint for Mini-Redis.
+# In Render: New > Blueprint > pick this repo > Apply.
+# Render routes public HTTPS to $PORT (the HTTP gateway + dashboard).
+# The RESP/TCP port (6379) is used by Redis clients locally.
+services:
+  - type: web
+    name: miniredis
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /healthz
+    autoDeploy: true
