@@ -1,11 +1,9 @@
 # ---- build stage ----
-FROM golang:1.22-alpine AS build
+FROM alpine:3.20 AS build
+RUN apk add --no-cache build-base
 WORKDIR /src
-# Pure standard-library project: no go.sum / no external modules to download.
-COPY go.mod ./
-COPY *.go ./
-# Static binary (no libc), so it runs in a tiny scratch image.
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /miniredis .
+COPY *.c *.h ./
+RUN gcc -O2 -Wall -pthread -o /miniredis dict.c store.c util.c proto.c http.c main.c
 
 # ---- runtime stage ----
 FROM alpine:3.20
