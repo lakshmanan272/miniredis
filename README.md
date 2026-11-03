@@ -2,7 +2,7 @@
 
 A small **Redis clone written from scratch in C** — it speaks the real Redis wire protocol (RESP) over TCP, keeps an in-memory key/value store with TTL expiry, and adds an HTTPS gateway so it can run on a free-tier cloud host and back a real application's distributed lock.
 
-Built as **Project 2**, and it plugs directly into **Project 1 ([BookMyEvent](https://github.com/lakshmanan-2007/bookmyevent))**: BookMyEvent's booking distributed lock runs on this Mini-Redis.
+Built as **Project 2**, and it plugs directly into **Project 1 ([BookMyEvent](https://github.com/lakshmanan272/bookmyevent))**: BookMyEvent's booking distributed lock runs on this Mini-Redis.
 
 **Stack:** C (C11) · POSIX sockets · pthreads · standard library only (no external deps) · Docker (Alpine).
 
